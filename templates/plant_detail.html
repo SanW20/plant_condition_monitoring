@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ plant.name }} — Samudika</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <h1>
+        <a href="{{ url_for('index') }}">Samudika</a>
+        <span class="subtitle">{{ plant.name }}</span>
+      </h1>
+      <div class="header-actions">
+        <a href="{{ url_for('edit_plant', plant_id=plant.id) }}" class="btn btn-outline">Edit</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="detail-page">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="flash flash-{{ category }}">{{ message }}</div>
+      {% endfor %}
+    {% endwith %}
+
+    <div class="detail-grid">
+
+      <!-- Left: Plant info -->
+      <div class="detail-main">
+        <div class="detail-card">
+          <div class="detail-header">
+            {% if perenual.thumbnail %}
+              <img src="{{ perenual.thumbnail }}" alt="{{ plant.name }}" class="detail-thumb">
+            {% else %}
+              <div class="detail-thumb-placeholder">🌱</div>
+            {% endif %}
+            <div class="detail-meta">
+              <h2>{{ plant.name }}</h2>
+              <p class="scientific-name">{{ perenual.scientific_name or plant.species_query }}</p>
+              <div class="detail-badges">
+                <span class="badge zone-badge zone-{{ plant.zone }}">
+                  {% if plant.zone == 'greenhouse' %}🏠 Greenhouse
+                  {% elif plant.zone == 'terrace' %}🪴 Terrace
+                  {% else %}🌿 Ground
+                  {% endif %}
+                </span>
+                <span class="badge status-badge badge-{{ status }}">
+                  {% if status == 'ok' %}OK
+                  {% elif status == 'critical' %}Critical
+                  {% else %}Needs Attention
+                  {% endif %}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <dl class="plant-facts">
+            <dt>Age</dt>
+            <dd>{{ plant.age_months | age_label }}
+              {% if plant.age_input %}<small>(entered: "{{ plant.age_input }}")</small>{% endif %}
+            </dd>
+
+            <dt>Added</dt>
+            <dd>{{ plant.date_added[:10] }}</dd>
+
+            <dt>Last watered</dt>
+            <dd>{{ plant.last_watered | days_since }}</dd>
+
+            <dt>Watering need</dt>
+            <dd>{{ perenual.watering | capitalize if perenual.watering else '—' }}</dd>
+
+            <dt>Min temperature</dt>
+            <dd>{{ perenual.min_temp_celsius }}°C</dd>
+
+            <dt>Drought tolerant</dt>
+            <dd>{{ 'Yes' if perenual.drought_tolerant else 'No' }}</dd>
+
+            <dt>Care level</dt>
+            <dd>{{ perenual.care_level | capitalize if perenual.care_level else '—' }}</dd>
+
+            <dt>Sunlight</dt>
+            <dd>
+              {% if perenual.sunlight %}
+                {{ perenual.sunlight | join(', ') }}
+              {% else %}—{% endif %}
+            </dd>
+          </dl>
+
+          {% if perenual.description %}
+          <div class="plant-description">
+            <h4>About this plant</h4>
+            <p>{{ perenual.description }}</p>
+          </div>
+          {% endif %}
+
+          {% if plant.notes %}
+          <div class="plant-notes">
+            <h4>Your notes</h4>
+            <p>{{ plant.notes }}</p>
+          </div>
+          {% endif %}
+        </div>
+
+        <!-- Watering action -->
+        <div class="water-action-card">
+          <h3>Watering Log</h3>
+          <p>Last watered: <strong>{{ plant.last_watered | days_since }}</strong></p>
+          <form action="{{ url_for('mark_watered', plant_id=plant.id) }}" method="post">
+            <button type="submit" class="btn btn-water btn-large">💧 Mark as Watered Now</button>
+          </form>
+        </div>
+
+        <!-- Danger zone -->
+        <div class="danger-zone">
+          <h4>Remove Plant</h4>
+          <form action="{{ url_for('delete_plant', plant_id=plant.id) }}" method="post"
+                onsubmit="return confirm('Remove {{ plant.name }} from your garden?');">
+            <button type="submit" class="btn btn-danger">Remove Plant</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Right: Alerts + weather -->
+      <div class="detail-sidebar">
+
+        <!-- Current alerts -->
+        <div class="sidebar-card">
+          <h3>Current Alerts</h3>
+          {% if weather_error %}
+            <p class="text-muted">Weather unavailable: {{ weather_error }}</p>
+          {% elif alerts %}
+            {% for alert in alerts %}
+            <div class="alert-block alert-{{ alert.level }}">
+              <div class="alert-type">
+                {% if alert.type == 'FROST_WARNING' %}❄️
+                {% elif alert.type == 'COVER_NEEDED' %}🧥
+                {% elif alert.type == 'WIND_RISK' %}💨
+                {% elif alert.type == 'WATER_NEEDED' %}💧
+                {% elif alert.type == 'HEAT_STRESS' %}🌡️
+                {% elif alert.type == 'HEAVY_RAIN' %}🌧️
+                {% endif %}
+                <strong>{{ alert.type.replace('_', ' ') }}</strong>
+              </div>
+              <p class="alert-message">{{ alert.message }}</p>
+              <p class="alert-action">&#8594; {{ alert.action }}</p>
+            </div>
+            {% endfor %}
+          {% else %}
+            <div class="all-ok">
+              <span class="ok-icon">✓</span>
+              <p>All conditions are fine right now.</p>
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Weather snapshot -->
+        {% if weather and not weather_error %}
+        <div class="sidebar-card">
+          <h3>Tallinn Weather</h3>
+          <div class="weather-mini">
+            <div class="wm-item"><span>Temp</span><strong>{{ weather.current_temp }}°C</strong></div>
+            <div class="wm-item"><span>Humidity</span><strong>{{ weather.current_humidity }}%</strong></div>
+            <div class="wm-item"><span>Wind</span><strong>{{ weather.current_wind }} m/s</strong></div>
+            <div class="wm-item"><span>Rain 24h</span><strong>{{ "%.1f"|format(weather.total_rain_24h) }}mm</strong></div>
+            <div class="wm-item"><span>Min temp 12h</span>
+              <strong class="{% if weather.min_temp_12h < 2 %}temp-critical{% elif weather.min_temp_12h < 8 %}temp-warn{% endif %}">
+                {{ "%.1f"|format(weather.min_temp_12h) }}°C
+              </strong>
+            </div>
+            <div class="wm-item"><span>Max temp 24h</span><strong>{{ "%.1f"|format(weather.max_temp_24h) }}°C</strong></div>
+          </div>
+          <p class="weather-source-note">Source: {{ weather.source }}</p>
+        </div>
+        {% endif %}
+
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>Samudika Plant Care &mdash; Tallinn</p>
+  </footer>
+</body>
+</html>

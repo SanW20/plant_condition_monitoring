@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Plant — Samudika</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <h1><a href="{{ url_for('index') }}">Samudika</a> <span class="subtitle">Add Plant</span></h1>
+    </div>
+  </header>
+
+  <main class="form-page">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="flash flash-{{ category }}">{{ message }}</div>
+      {% endfor %}
+    {% endwith %}
+
+    <div class="form-card">
+      <h2>Add a New Plant</h2>
+
+      <!-- Step 1 / Step 2 form — always shown so user can adjust values -->
+      <form method="post" action="{{ url_for('add_plant') }}">
+        <input type="hidden" name="action" value="search">
+
+        <div class="form-group">
+          <label for="name">Your name for this plant <span class="req">*</span></label>
+          <input type="text" id="name" name="name"
+                 value="{{ form_data.get('name', '') }}"
+                 placeholder="e.g. Big Tom, Balcony Lavender"
+                 required>
+        </div>
+
+        <div class="form-group">
+          <label for="species_query">Species / common name (for lookup) <span class="req">*</span></label>
+          <input type="text" id="species_query" name="species_query"
+                 value="{{ form_data.get('species_query', '') }}"
+                 placeholder="e.g. tomato, lavender, basil"
+                 required>
+          <small>Used to search the Perenual plant database for care requirements.</small>
+        </div>
+
+        <div class="form-group">
+          <label for="zone">Location / zone <span class="req">*</span></label>
+          <select id="zone" name="zone">
+            <option value="greenhouse" {% if form_data.get('zone') == 'greenhouse' %}selected{% endif %}>
+              🏠 Greenhouse
+            </option>
+            <option value="terrace" {% if form_data.get('zone', 'terrace') == 'terrace' %}selected{% endif %}>
+              🪴 Terrace
+            </option>
+            <option value="ground" {% if form_data.get('zone') == 'ground' %}selected{% endif %}>
+              🌿 Ground (Outdoor)
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="age">Plant age <span class="req">*</span></label>
+          <input type="text" id="age" name="age"
+                 value="{{ form_data.get('age', '') }}"
+                 placeholder="e.g. 6 months, 2 years, 1 year 3 months"
+                 required>
+        </div>
+
+        <div class="form-group">
+          <label for="notes">Notes (optional)</label>
+          <textarea id="notes" name="notes" rows="3"
+                    placeholder="e.g. Slightly yellowing lower leaves, repotted last week">{{ form_data.get('notes', '') }}</textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Search Species</button>
+        <a href="{{ url_for('index') }}" class="btn btn-outline">Cancel</a>
+      </form>
+
+      <!-- Step 2: Show top 3 results as radio picker -->
+      {% if search_results %}
+      <div class="species-picker">
+        <h3>Select the correct species</h3>
+        <form method="post" action="{{ url_for('add_plant') }}">
+          <input type="hidden" name="action" value="confirm">
+          <input type="hidden" name="name" value="{{ form_data.get('name', '') }}">
+          <input type="hidden" name="zone" value="{{ form_data.get('zone', 'terrace') }}">
+          <input type="hidden" name="age" value="{{ form_data.get('age', '') }}">
+          <input type="hidden" name="notes" value="{{ form_data.get('notes', '') }}">
+          <input type="hidden" name="species_query" value="{{ form_data.get('species_query', '') }}">
+
+          {% for result in search_results %}
+          <label class="species-option">
+            <input type="radio" name="perenual_id" value="{{ result.perenual_id }}"
+                   {% if loop.first %}checked{% endif %} required>
+            <div class="species-card">
+              {% if result.thumbnail %}
+                <img src="{{ result.thumbnail }}" alt="{{ result.common_name }}" class="species-thumb">
+              {% else %}
+                <div class="species-thumb-placeholder">🌿</div>
+              {% endif %}
+              <div class="species-info">
+                <strong>{{ result.common_name }}</strong>
+                <em>{{ result.scientific_name }}</em>
+                {% if result.description %}
+                  <p class="species-desc">{{ result.description[:150] }}{% if result.description|length > 150 %}…{% endif %}</p>
+                {% endif %}
+              </div>
+            </div>
+          </label>
+          {% endfor %}
+
+          {% if not search_results %}
+            <p class="no-results">No results found. Try a different name.</p>
+          {% else %}
+            <button type="submit" class="btn btn-primary" style="margin-top:16px;">
+              Confirm &amp; Add Plant
+            </button>
+          {% endif %}
+        </form>
+      </div>
+      {% endif %}
+
+    </div>
+  </main>
+
+  <footer>
+    <p>Samudika Plant Care &mdash; Tallinn</p>
+  </footer>
+</body>
+</html>

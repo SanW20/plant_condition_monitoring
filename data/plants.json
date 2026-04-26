@@ -1,0 +1,30 @@
+{
+  "plants": [
+    {
+      "id": "6c78de7c-596b-4bf9-8eda-b8d2c4e3879c",
+      "name": "Tomato red",
+      "species_query": "tomato",
+      "perenual_id": 2292,
+      "zone": "terrace",
+      "age_months": 1,
+      "age_input": "1 month",
+      "date_added": "2026-04-26T08:38:43.945311+00:00",
+      "last_watered": null,
+      "notes": "re",
+      "cached_perenual_data": {
+        "perenual_id": 2292,
+        "common_name": "tree tomato",
+        "scientific_name": "Cyphomandra betacea",
+        "description": "",
+        "thumbnail": "https://s3.us-central-1.wasabisys.com/perenual/species_image/2292_cyphomandra_betacea/thumbnail/49288036626_f4bfa5c8c5_b.jpg?X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=0MPGHU7CIPXNPMVWMXUW%2F20260426%2Fus-central-1%2Fs3%2Faws4_request&X-Amz-Date=20260426T083843Z&X-Amz-SignedHeaders=host&X-Amz-Expires=86400&X-Amz-Signature=834fde210065bc21495d047a05f1f275a3784449211023bb758b9bc7f6927488",
+        "watering": "average",
+        "sunlight": [],
+        "drought_tolerant": false,
+        "indoor": false,
+        "min_temp_celsius": 5,
+        "max_temp_celsius": 38,
+        "care_level": "moderate"
+      }
+    }
+  ]
+}

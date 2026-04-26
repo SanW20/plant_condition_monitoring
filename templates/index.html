@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Samudika — Plant Care</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <h1>Samudika <span class="subtitle">Plant Care — Tallinn</span></h1>
+      <div class="header-actions">
+        <a href="{{ url_for('add_plant') }}" class="btn btn-primary">+ Add Plant</a>
+        <form action="{{ url_for('manual_check') }}" method="post" style="display:inline;">
+          <button type="submit" class="btn btn-secondary">Run Check Now</button>
+        </form>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="flash flash-{{ category }}">{{ message }}</div>
+      {% endfor %}
+    {% endwith %}
+
+    <!-- Weather bar -->
+    <section class="weather-bar">
+      {% if weather_error %}
+        <div class="weather-error">Weather data unavailable: {{ weather_error }}</div>
+      {% elif weather %}
+        <div class="weather-item">
+          <span class="weather-label">Temp</span>
+          <span class="weather-value">{{ weather.current_temp }}°C</span>
+        </div>
+        <div class="weather-item">
+          <span class="weather-label">Humidity</span>
+          <span class="weather-value">{{ weather.current_humidity }}%</span>
+        </div>
+        <div class="weather-item">
+          <span class="weather-label">Wind</span>
+          <span class="weather-value">{{ weather.current_wind }} m/s</span>
+        </div>
+        <div class="weather-item">
+          <span class="weather-label">Rain (24h)</span>
+          <span class="weather-value">{{ "%.1f"|format(weather.total_rain_24h) }}mm</span>
+        </div>
+        <div class="weather-item">
+          <span class="weather-label">Min temp (12h)</span>
+          <span class="weather-value {% if weather.min_temp_12h < 2 %}temp-critical{% elif weather.min_temp_12h < 8 %}temp-warn{% endif %}">
+            {{ "%.1f"|format(weather.min_temp_12h) }}°C
+          </span>
+        </div>
+        <div class="weather-source">via {{ weather.source }}</div>
+      {% endif %}
+    </section>
+
+    <!-- Summary -->
+    <div class="summary-bar">
+      <span>{{ total_plants }} plant(s) tracked across 3 zones</span>
+    </div>
+
+    <!-- Zones -->
+    {% for zone_name, zone_plants in zones.items() %}
+    <section class="zone-section zone-{{ zone_name }}">
+      <div class="zone-header">
+        <h2 class="zone-title">
+          {% if zone_name == 'greenhouse' %}🏠 Greenhouse
+          {% elif zone_name == 'terrace' %}🪴 Terrace
+          {% else %}🌿 Ground (Outdoor)
+          {% endif %}
+        </h2>
+        <span class="zone-count">{{ zone_plants|length }} plant(s)</span>
+      </div>
+
+      {% if zone_plants %}
+        <div class="plant-grid">
+          {% for entry in zone_plants %}
+          {% set plant = entry.plant %}
+          {% set palerts = entry.alerts %}
+          {% set status = entry.status %}
+          <div class="plant-card status-{{ status }}">
+            <div class="plant-card-top">
+              {% if plant.cached_perenual_data.thumbnail %}
+                <img src="{{ plant.cached_perenual_data.thumbnail }}"
+                     alt="{{ plant.name }}" class="plant-thumb">
+              {% else %}
+                <div class="plant-thumb-placeholder">🌱</div>
+              {% endif %}
+              <div class="plant-card-info">
+                <a href="{{ url_for('plant_detail', plant_id=plant.id) }}" class="plant-name">
+                  {{ plant.name }}
+                </a>
+                <div class="plant-species">{{ plant.cached_perenual_data.common_name or plant.species_query }}</div>
+                <div class="plant-age">{{ plant.age_months | age_label }}</div>
+                <div class="plant-watered">Last watered: {{ plant.last_watered | days_since }}</div>
+              </div>
+              <div class="status-badge badge-{{ status }}">
+                {% if status == 'ok' %}OK
+                {% elif status == 'critical' %}Critical
+                {% else %}Alert
+                {% endif %}
+              </div>
+            </div>
+
+            {% if palerts %}
+            <div class="plant-alerts-summary">
+              {% for alert in palerts %}
+              <div class="alert-pill alert-{{ alert.level }}">
+                {% if alert.type == 'FROST_WARNING' %}❄️
+                {% elif alert.type == 'COVER_NEEDED' %}🧥
+                {% elif alert.type == 'WIND_RISK' %}💨
+                {% elif alert.type == 'WATER_NEEDED' %}💧
+                {% elif alert.type == 'HEAT_STRESS' %}🌡️
+                {% elif alert.type == 'HEAVY_RAIN' %}🌧️
+                {% endif %}
+                {{ alert.type.replace('_', ' ') }}
+              </div>
+              {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="plant-card-actions">
+              <form action="{{ url_for('mark_watered', plant_id=plant.id) }}" method="post">
+                <button type="submit" class="btn btn-water">💧 Mark Watered</button>
+              </form>
+              <a href="{{ url_for('plant_detail', plant_id=plant.id) }}" class="btn btn-outline">View</a>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="empty-zone">No plants in this zone yet.
+          <a href="{{ url_for('add_plant') }}">Add one</a>
+        </p>
+      {% endif %}
+    </section>
+    {% endfor %}
+  </main>
+
+  <footer>
+    <p>Samudika Plant Care &mdash; Tallinn &mdash; Weather checks every 3 hours</p>
+  </footer>
+</body>
+</html>

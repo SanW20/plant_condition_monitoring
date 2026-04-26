@@ -1,0 +1,424 @@
+/* ----------------------------------------------------------------
+   Samudika Plant Care — Stylesheet
+   ---------------------------------------------------------------- */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --green:        #27ae60;
+  --green-light:  #eafaf1;
+  --green-dark:   #1e8449;
+  --yellow:       #f39c12;
+  --yellow-light: #fef9e7;
+  --red:          #c0392b;
+  --red-light:    #fdedec;
+  --blue:         #2980b9;
+  --blue-light:   #eaf4fb;
+  --grey:         #7f8c8d;
+  --grey-light:   #f4f6f7;
+  --text:         #2c3e50;
+  --border:       #dde1e7;
+  --radius:       8px;
+  --shadow:       0 2px 8px rgba(0,0,0,0.08);
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: #f0f4f0;
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+a { color: var(--green-dark); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ---- Header ---- */
+header {
+  background: var(--green-dark);
+  color: #fff;
+  padding: 0 24px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+.header-inner {
+  max-width: 1100px;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 60px;
+}
+header h1 { font-size: 1.3rem; font-weight: 700; color: #fff; }
+header h1 a { color: #fff; }
+header h1 .subtitle { font-weight: 400; opacity: 0.8; font-size: 1rem; margin-left: 8px; }
+.header-actions { display: flex; gap: 8px; }
+
+/* ---- Buttons ---- */
+.btn {
+  display: inline-block;
+  padding: 7px 16px;
+  border-radius: var(--radius);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+.btn-primary  { background: var(--green);      color: #fff; }
+.btn-primary:hover  { background: var(--green-dark); color: #fff; text-decoration: none; }
+.btn-secondary { background: rgba(255,255,255,0.15); color: #fff; border-color: rgba(255,255,255,0.4); }
+.btn-secondary:hover { background: rgba(255,255,255,0.25); text-decoration: none; }
+.btn-outline  { background: #fff; color: var(--text); border-color: var(--border); }
+.btn-outline:hover  { background: var(--grey-light); text-decoration: none; }
+.btn-water    { background: var(--blue-light); color: var(--blue); border-color: var(--blue); }
+.btn-water:hover    { background: var(--blue); color: #fff; text-decoration: none; }
+.btn-danger   { background: var(--red-light); color: var(--red); border-color: var(--red); }
+.btn-danger:hover   { background: var(--red); color: #fff; text-decoration: none; }
+.btn-large    { padding: 10px 24px; font-size: 1rem; }
+
+/* ---- Flash messages ---- */
+.flash {
+  max-width: 1100px;
+  margin: 12px auto 0;
+  padding: 10px 16px;
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+}
+.flash-success { background: var(--green-light);  border-left: 4px solid var(--green); }
+.flash-warning { background: var(--yellow-light); border-left: 4px solid var(--yellow); }
+.flash-error   { background: var(--red-light);    border-left: 4px solid var(--red); }
+
+/* ---- Main layout ---- */
+main {
+  max-width: 1100px;
+  margin: 20px auto 40px;
+  padding: 0 16px;
+}
+
+/* ---- Weather bar ---- */
+.weather-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 20px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+.weather-item { display: flex; flex-direction: column; align-items: center; min-width: 70px; }
+.weather-label { font-size: 0.72rem; text-transform: uppercase; color: var(--grey); letter-spacing: 0.04em; }
+.weather-value { font-size: 1.1rem; font-weight: 700; color: var(--text); }
+.weather-source { margin-left: auto; font-size: 0.75rem; color: var(--grey); font-style: italic; }
+.weather-error { color: var(--red); font-size: 0.9rem; }
+.temp-warn     { color: var(--yellow); }
+.temp-critical { color: var(--red); }
+
+/* ---- Summary bar ---- */
+.summary-bar {
+  font-size: 0.85rem;
+  color: var(--grey);
+  margin-bottom: 20px;
+}
+
+/* ---- Zone sections ---- */
+.zone-section {
+  margin-bottom: 32px;
+}
+.zone-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 12px;
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 6px;
+}
+.zone-title { font-size: 1.15rem; font-weight: 700; }
+.zone-count { font-size: 0.8rem; color: var(--grey); }
+
+.zone-greenhouse .zone-title { color: #16a085; }
+.zone-terrace    .zone-title { color: #8e44ad; }
+.zone-ground     .zone-title { color: var(--green-dark); }
+
+.empty-zone { color: var(--grey); font-size: 0.9rem; padding: 12px 0; }
+
+/* ---- Plant grid ---- */
+.plant-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+/* ---- Plant card ---- */
+.plant-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: box-shadow 0.15s;
+}
+.plant-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
+.plant-card.status-warning  { border-left: 4px solid var(--yellow); }
+.plant-card.status-critical { border-left: 4px solid var(--red); }
+.plant-card.status-ok       { border-left: 4px solid var(--green); }
+
+.plant-card-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.plant-thumb {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+.plant-thumb-placeholder {
+  width: 56px;
+  height: 56px;
+  background: var(--green-light);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  flex-shrink: 0;
+}
+.plant-card-info { flex: 1; min-width: 0; }
+.plant-name  { font-weight: 700; font-size: 1rem; display: block; }
+.plant-species { font-size: 0.8rem; color: var(--grey); font-style: italic; }
+.plant-age, .plant-watered { font-size: 0.78rem; color: var(--grey); }
+
+/* Status badges */
+.status-badge, .badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+.badge-ok       { background: var(--green-light);  color: var(--green-dark); }
+.badge-warning  { background: var(--yellow-light); color: #b7770d; }
+.badge-critical { background: var(--red-light);    color: var(--red); }
+
+/* Alert pills on card */
+.plant-alerts-summary { display: flex; flex-wrap: wrap; gap: 6px; }
+.alert-pill {
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+.alert-pill.alert-warning  { background: var(--yellow-light); color: #b7770d; }
+.alert-pill.alert-critical { background: var(--red-light);    color: var(--red); }
+
+.plant-card-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* ---- Forms ---- */
+.form-page main { max-width: 680px; }
+.form-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  box-shadow: var(--shadow);
+}
+.form-card h2 { margin-bottom: 20px; font-size: 1.2rem; }
+.form-group { margin-bottom: 18px; }
+.form-group label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.9rem; }
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 0.95rem;
+  color: var(--text);
+  background: #fff;
+  transition: border-color 0.15s;
+}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgba(39,174,96,0.12);
+}
+.form-group small { display: block; margin-top: 4px; color: var(--grey); font-size: 0.8rem; }
+.req { color: var(--red); }
+
+/* Species picker */
+.species-picker { margin-top: 28px; border-top: 1px solid var(--border); padding-top: 20px; }
+.species-picker h3 { margin-bottom: 14px; font-size: 1rem; }
+.species-option { display: block; margin-bottom: 12px; cursor: pointer; }
+.species-option input[type=radio] { display: none; }
+.species-card {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  transition: border-color 0.15s, background 0.15s;
+}
+.species-option input:checked + .species-card {
+  border-color: var(--green);
+  background: var(--green-light);
+}
+.species-thumb {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+.species-thumb-placeholder {
+  width: 64px;
+  height: 64px;
+  background: var(--grey-light);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  flex-shrink: 0;
+}
+.species-info strong { display: block; font-size: 0.95rem; }
+.species-info em { font-size: 0.82rem; color: var(--grey); }
+.species-desc { font-size: 0.82rem; color: var(--grey); margin-top: 4px; }
+
+/* ---- Detail page ---- */
+.detail-page main { max-width: 1000px; }
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 20px;
+  align-items: start;
+}
+@media (max-width: 720px) {
+  .detail-grid { grid-template-columns: 1fr; }
+}
+
+.detail-card, .sidebar-card, .water-action-card, .danger-zone {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+  margin-bottom: 16px;
+}
+.detail-header {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+.detail-thumb {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: var(--radius);
+  flex-shrink: 0;
+}
+.detail-thumb-placeholder {
+  width: 80px;
+  height: 80px;
+  background: var(--green-light);
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.2rem;
+  flex-shrink: 0;
+}
+.detail-meta h2 { font-size: 1.3rem; }
+.scientific-name { font-style: italic; color: var(--grey); font-size: 0.88rem; }
+.detail-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+
+.zone-badge.zone-greenhouse { background: #e8f8f5; color: #16a085; }
+.zone-badge.zone-terrace    { background: #f5eef8; color: #8e44ad; }
+.zone-badge.zone-ground     { background: var(--green-light); color: var(--green-dark); }
+
+.plant-facts { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; font-size: 0.9rem; }
+.plant-facts dt { font-weight: 600; color: var(--grey); }
+.plant-facts dd small { color: var(--grey); font-size: 0.78rem; }
+
+.plant-description, .plant-notes {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+.plant-description h4, .plant-notes h4 { font-size: 0.88rem; text-transform: uppercase; color: var(--grey); margin-bottom: 6px; }
+.plant-description p, .plant-notes p { font-size: 0.9rem; color: var(--text); }
+
+.water-action-card h3 { margin-bottom: 8px; }
+.water-action-card p { font-size: 0.9rem; margin-bottom: 12px; }
+
+.danger-zone { border-color: #fad7d4; }
+.danger-zone h4 { font-size: 0.88rem; color: var(--red); margin-bottom: 8px; }
+
+/* Sidebar alerts */
+.sidebar-card h3 { font-size: 1rem; margin-bottom: 12px; }
+.alert-block {
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  margin-bottom: 10px;
+}
+.alert-block.alert-warning  { background: var(--yellow-light); border-left: 3px solid var(--yellow); }
+.alert-block.alert-critical { background: var(--red-light);    border-left: 3px solid var(--red); }
+.alert-type  { font-weight: 700; font-size: 0.85rem; margin-bottom: 4px; }
+.alert-message { font-size: 0.85rem; margin-bottom: 4px; }
+.alert-action { font-size: 0.83rem; color: var(--green-dark); font-weight: 600; }
+
+.all-ok {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  background: var(--green-light);
+  border-radius: var(--radius);
+}
+.ok-icon { font-size: 1.4rem; color: var(--green); }
+.all-ok p { font-size: 0.9rem; color: var(--green-dark); }
+
+/* Mini weather grid */
+.weather-mini {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.wm-item {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.83rem;
+}
+.wm-item span { color: var(--grey); font-size: 0.75rem; }
+.wm-item strong { font-size: 0.95rem; }
+.weather-source-note { font-size: 0.75rem; color: var(--grey); margin-top: 10px; font-style: italic; }
+
+.text-muted { color: var(--grey); font-size: 0.88rem; }
+
+/* ---- Footer ---- */
+footer {
+  text-align: center;
+  padding: 20px;
+  font-size: 0.8rem;
+  color: var(--grey);
+  border-top: 1px solid var(--border);
+}
