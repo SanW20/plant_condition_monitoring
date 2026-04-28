@@ -176,4 +176,4 @@ def _build_email(result: dict) -> tuple[str, str, str]:
     </body>
     </html>"""
 
-    return subject, plain_body, html_body
+    return subject, plain_body, html_body 
