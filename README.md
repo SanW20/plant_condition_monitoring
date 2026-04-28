@@ -24,6 +24,7 @@ When a check runs (every 3 hours automatically, or manually on demand):
 | Terrace | Partial | Cover needed, wind risk, frost warnings |
 | Ground | Open | All alerts including heavy rain / waterlogging |
 
+
 ## Alert Types
 
 | Alert | Trigger |
