@@ -170,5 +170,5 @@ No issues detected: Greenhouse Rose, Basil
 
 - Species data from Perenual is cached inside `plants.json` after the first fetch — subsequent runs do not hit the API again for existing plants
 - The Perenual free tier allows 100 requests per day which is sufficient for personal use
-- `data/plants.json` is not gitignored — your plant list persists across restarts and can be committed if desired
+- `data/plants.json` is not gitignored — your plant list persists across restarts and can be committed if desired 
 
