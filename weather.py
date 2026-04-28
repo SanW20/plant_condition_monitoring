@@ -148,3 +148,4 @@ def get_weather():
                 f"Open-Meteo: {primary_error}\n"
                 f"OWM: {fallback_error}"
             )
+ 
