@@ -216,4 +216,4 @@ def _age_label(age_months: int) -> str:
     label = f"{years} year{'s' if years != 1 else ''}"
     if months:
         label += f" {months} month{'s' if months != 1 else ''}"
-    return label + " old"
+    return label + " old" 
