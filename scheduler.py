@@ -61,4 +61,4 @@ def start_scheduler():
     )
     scheduler.start()
     print("[scheduler] Background scheduler started — checks every 3 hours.")
-    return scheduler
+    return scheduler 
