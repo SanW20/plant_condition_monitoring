@@ -84,7 +84,7 @@ When a check runs (every 3 hours automatically, or manually on demand):
 
 ## Setup
 
-### 1. Clone and install
+### 1. Clone and install.
 
 ```bash
 pip install -r requirements.txt
