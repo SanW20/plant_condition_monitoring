@@ -38,4 +38,4 @@ WATERING_INTERVALS = {
     "average":   4,
     "minimum":   7,
     "none":      14,
-}
+} 
