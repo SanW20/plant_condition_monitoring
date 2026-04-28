@@ -126,4 +126,4 @@ def _hardiness_to_celsius(hardiness: dict) -> float:
 
     # Strip letter suffix e.g. "7a" -> "7"
     zone_number = "".join(c for c in str(min_zone_str) if c.isdigit())
-    return zone_map.get(zone_number, default_min)
+    return zone_map.get(zone_number, default_min) 
